@@ -465,6 +465,9 @@ void Voxel::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_collision_aabbs", "aabbs"), &Voxel::_b_set_collision_aabbs);
 	ClassDB::bind_method(D_METHOD("get_collision_aabbs"), &Voxel::_b_get_collision_aabbs);
 
+	ClassDB::bind_method(D_METHOD("set_contributes_to_ao", "contributes"), &Voxel::set_contributing_to_ao);
+	ClassDB::bind_method(D_METHOD("get_contributes_to_ao"), &Voxel::is_contributing_to_ao);
+
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "voxel_name"), "set_voxel_name", "get_voxel_name");
 	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "color"), "set_color", "get_color");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "transparent"), "set_transparent", "is_transparent");
@@ -472,6 +475,7 @@ void Voxel::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "geometry_type", PROPERTY_HINT_ENUM, "None,Cube,CustomMesh"), "set_geometry_type", "get_geometry_type");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "custom_mesh", PROPERTY_HINT_RESOURCE_TYPE, "Mesh"), "set_custom_mesh", "get_custom_mesh");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "collision_aabbs", PROPERTY_HINT_TYPE_STRING, itos(Variant::AABB) + ":"), "set_collision_aabbs", "get_collision_aabbs");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "contributes_to_ao"), "set_contributes_to_ao", "get_contributes_to_ao");
 
 	BIND_ENUM_CONSTANT(GEOMETRY_NONE);
 	BIND_ENUM_CONSTANT(GEOMETRY_CUBE);

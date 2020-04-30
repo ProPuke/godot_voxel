@@ -119,7 +119,7 @@ private:
 	FixedArray<Vector2, Cube::SIDE_COUNT> _cube_tiles;
 	Ref<Mesh> _custom_mesh;
 	std::vector<AABB> _collision_aabbs;
-	bool _contributes_to_ao = false;
+	bool _contributes_to_ao = true;
 
 	FixedArray<uint32_t, Cube::SIDE_COUNT> _side_pattern_index;
 
