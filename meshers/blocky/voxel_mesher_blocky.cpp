@@ -23,9 +23,15 @@ const int g_opposite_side[6] = {
 };
 
 inline bool is_face_visible(const VoxelLibrary &lib, const Voxel &vt, int other_voxel_id, int side) {
+	if (side==Cube::SIDE_POSITIVE_Y && vt.get_cube_geometry()<0.0) {
+		return true;
+	}
+
 	if (lib.has_voxel(other_voxel_id)) {
 		const Voxel &other_vt = lib.get_voxel_const(other_voxel_id);
 		if (other_vt.is_transparent() && vt.get_id() != other_voxel_id) {
+			return true;
+		}else if (g_opposite_side[side]==Cube::SIDE_POSITIVE_Y && other_vt.get_cube_geometry()<0.0) {
 			return true;
 		} else {
 			const unsigned int ai = vt.get_side_pattern_index(side);

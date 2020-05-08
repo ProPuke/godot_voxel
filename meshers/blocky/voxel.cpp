@@ -331,6 +331,8 @@ void Voxel::set_custom_mesh(Ref<Mesh> mesh) {
 }
 
 Ref<Voxel> Voxel::set_cube_geometry(float sy) {
+	_cube_geometry_padding_y = sy;
+	
 	sy = 1.0 + sy;
 
 	for (unsigned int side = 0; side < Cube::SIDE_COUNT; ++side) {

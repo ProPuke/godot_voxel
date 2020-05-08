@@ -84,6 +84,8 @@ public:
 	inline bool is_contributing_to_ao() const { return _contributes_to_ao; }
 	inline void set_contributing_to_ao(bool b) { _contributes_to_ao = b; }
 
+	inline float get_cube_geometry() const { return _cube_geometry_padding_y; }
+
 private:
 	bool _set(const StringName &p_name, const Variant &p_value);
 	bool _get(const StringName &p_name, Variant &r_ret) const;
