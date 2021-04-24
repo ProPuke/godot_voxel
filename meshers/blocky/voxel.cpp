@@ -10,7 +10,8 @@ Voxel::Voxel() :
 		_material_id(0),
 		_is_transparent(false),
 		_color(1.f, 1.f, 1.f),
-		_geometry_type(GEOMETRY_NONE) {
+		_geometry_type(GEOMETRY_NONE),
+		_cube_geometry_padding_y(0) {
 }
 
 static Cube::Side name_to_side(const String &s) {
@@ -47,6 +48,9 @@ bool Voxel::_set(const StringName &p_name, const Variant &p_value) {
 			set_cube_uv_side(side, v);
 			return true;
 		}
+	} else if (name == "cube_geometry/padding_y") {
+		set_cube_geometry(p_value);
+		return true;
 	}
 
 	return false;
@@ -62,6 +66,9 @@ bool Voxel::_get(const StringName &p_name, Variant &r_ret) const {
 			r_ret = _cube_tiles[side];
 			return true;
 		}
+	} else if (name == "cube_geometry/padding_y") {
+		r_ret = get_cube_geometry();
+		return true;
 	}
 
 	return false;
@@ -135,7 +142,8 @@ void Voxel::set_custom_mesh(Ref<Mesh> mesh) {
 	_custom_mesh = mesh;
 }
 
-void Voxel::set_cube_geometry() {
+void Voxel::set_cube_geometry(float sy) {
+	_cube_geometry_padding_y = sy;
 }
 
 void Voxel::set_random_tickable(bool rt) {
@@ -178,7 +186,7 @@ void Voxel::set_collision_mask(uint32_t mask) {
 }
 
 static void bake_cube_geometry(Voxel &config, Voxel::BakedData &baked_data, int p_atlas_size) {
-	const float sy = 1.0;
+	const float sy = 1.0 + config.get_cube_geometry();
 
 	for (unsigned int side = 0; side < Cube::SIDE_COUNT; ++side) {
 		std::vector<Vector3> &positions = baked_data.model.side_positions[side];
@@ -222,6 +230,7 @@ static void bake_cube_geometry(Voxel &config, Voxel::BakedData &baked_data, int 
 		}
 	}
 
+	baked_data.cube_geometry_padding_y = config.get_cube_geometry();
 	baked_data.empty = false;
 }
 
@@ -365,6 +374,7 @@ void Voxel::bake(BakedData &baked_data, int p_atlas_size) {
 	baked_data.is_transparent = _is_transparent;
 	baked_data.material_id = _material_id;
 	baked_data.color = _color;
+	baked_data.contributes_to_ao = _contributes_to_ao;
 
 	switch (_geometry_type) {
 		case GEOMETRY_NONE:
@@ -418,6 +428,9 @@ void Voxel::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_collision_mask", "mask"), &Voxel::set_collision_mask);
 	ClassDB::bind_method(D_METHOD("get_collision_mask"), &Voxel::get_collision_mask);
 
+	ClassDB::bind_method(D_METHOD("set_contributes_to_ao", "contributes"), &Voxel::set_contributing_to_ao);
+	ClassDB::bind_method(D_METHOD("get_contributes_to_ao"), &Voxel::is_contributing_to_ao);
+
 	ClassDB::bind_method(D_METHOD("is_empty"), &Voxel::is_empty);
 
 	// TODO Update to StringName in Godot 4
@@ -430,6 +443,7 @@ void Voxel::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "custom_mesh", PROPERTY_HINT_RESOURCE_TYPE, "Mesh"), "set_custom_mesh", "get_custom_mesh");
 	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "collision_aabbs", PROPERTY_HINT_TYPE_STRING, itos(Variant::AABB) + ":"), "set_collision_aabbs", "get_collision_aabbs");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "collision_mask", PROPERTY_HINT_LAYERS_3D_PHYSICS), "set_collision_mask", "get_collision_mask");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "contributes_to_ao"), "set_contributes_to_ao", "get_contributes_to_ao");
 
 	BIND_ENUM_CONSTANT(GEOMETRY_NONE);
 	BIND_ENUM_CONSTANT(GEOMETRY_CUBE);
@@ -465,3 +479,4 @@ void Voxel::_b_set_collision_aabbs(Array array) {
 		_collision_aabbs[i] = aabb;
 	}
 }
+

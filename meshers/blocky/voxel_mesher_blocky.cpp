@@ -24,9 +24,15 @@ const int g_opposite_side[6] = {
 
 inline bool is_face_visible(const VoxelLibrary::BakedData &lib, const Voxel::BakedData &vt, uint32_t other_voxel_id, int side) {
 	if (other_voxel_id < lib.models.size()) {
+		if (side==Cube::SIDE_POSITIVE_Y && vt.cube_geometry_padding_y<0.0) {
+			return true;
+		}
+
 		const Voxel::BakedData &other_vt = lib.models[other_voxel_id];
 		// TODO Might test against material somehow, but not only
 		if (other_vt.empty || (other_vt.is_transparent && !vt.is_transparent)) {
+			return true;
+		} else if (g_opposite_side[side]==Cube::SIDE_POSITIVE_Y && other_vt.cube_geometry_padding_y<0.0) {
 			return true;
 		} else {
 			const unsigned int ai = vt.model.side_pattern_indices[side];
@@ -501,3 +507,4 @@ void VoxelMesherBlocky::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_occlusion_darkness", "value"), &VoxelMesherBlocky::set_occlusion_darkness);
 	ClassDB::bind_method(D_METHOD("get_occlusion_darkness"), &VoxelMesherBlocky::get_occlusion_darkness);
 }
+

@@ -205,7 +205,6 @@ void VoxelLibrary::generate_side_culling_matrix() {
 		}
 
 		Voxel::BakedData &model_data = _baked_data.models[type_id];
-		model_data.contributes_to_ao = true;
 
 		for (uint16_t side = 0; side < Cube::SIDE_COUNT; ++side) {
 			const std::vector<Vector3> &positions = model_data.model.side_positions[side];
@@ -285,10 +284,6 @@ void VoxelLibrary::generate_side_culling_matrix() {
 
 			if (full_side_pattern_index == NULL_INDEX && bitmap.all()) {
 				full_side_pattern_index = pattern_index;
-			}
-			if (pattern_index != full_side_pattern_index) {
-				// Non-cube voxels don't contribute to AO at the moment
-				model_data.contributes_to_ao = false;
 			}
 
 			//pattern->occurrences.push_back(TypeAndSide{ type_id, side });
@@ -413,3 +408,4 @@ Ref<Voxel> VoxelLibrary::_b_get_voxel_by_name(StringName name) {
 	ERR_FAIL_COND_V(id == -1, Ref<Voxel>());
 	return _voxel_types[id];
 }
+

@@ -52,6 +52,7 @@ public:
 		int material_id;
 		Color color;
 		bool is_transparent;
+		float cube_geometry_padding_y;
 		bool contributes_to_ao;
 		bool empty;
 
@@ -125,6 +126,11 @@ public:
 
 	const std::vector<AABB> &get_collision_aabbs() const { return _collision_aabbs; }
 
+	inline bool is_contributing_to_ao() const { return _contributes_to_ao; }
+	inline void set_contributing_to_ao(bool b) { _contributes_to_ao = b; }
+
+	inline float get_cube_geometry() const { return _cube_geometry_padding_y; }
+
 private:
 	bool _set(const StringName &p_name, const Variant &p_value);
 	bool _get(const StringName &p_name, Variant &r_ret) const;
@@ -134,7 +140,7 @@ private:
 
 	static void _bind_methods();
 
-	void set_cube_geometry();
+	void set_cube_geometry(float sy);
 
 	Array _b_get_collision_aabbs() const;
 	void _b_set_collision_aabbs(Array array);
@@ -149,9 +155,11 @@ private:
 	bool _is_transparent;
 	Color _color;
 	GeometryType _geometry_type;
+	float _cube_geometry_padding_y;
 	FixedArray<Vector2, Cube::SIDE_COUNT> _cube_tiles;
 	Ref<Mesh> _custom_mesh;
 	std::vector<AABB> _collision_aabbs;
+	bool _contributes_to_ao = true;
 	bool _random_tickable = false;
 	bool _empty = true;
 	uint32_t _collision_mask = 1;
@@ -161,3 +169,4 @@ VARIANT_ENUM_CAST(Voxel::GeometryType)
 VARIANT_ENUM_CAST(Voxel::Side)
 
 #endif // VOXEL_TYPE_H
+
